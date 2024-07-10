@@ -1,0 +1,162 @@
+# #Virtual Machine Networks Setting
+
+#NAT
+Communication Type:
+Router(Internet)<-- Host OS <--[Virtual/logical Router]<-- Virtual OSs
+Forward Communication is not possible that means router and host can't ping VMs
+
+#Bridged Adapter:
+Communication Type:
+Router <--> Host OS <--> Virtual OSs
+Everything can communicate with each other, its like putting a switch and connecting every device with it.
+
+### 
+
+#Internal Network:
+Communication Type:
+Virtual OS <--> Virtual OS
+All VMs can communicate with each other but not the Host OS and router, that means no internet.
+
+#Host-Only Network:
+Communication Type:
+Host OS <----> Virtual OSs
+All VMs can talk to each other and host OS but not router, that means no internet unless the host is router.
+
+#NAT Network:
+Communication Type:
+All VMs can communicate with each other and host OS using the internet of the host OS, that means they access external network using the IP of host OS.
+
+#Vulnerability Database: https://nvd.nist.gov/vuln
+#Vulnerability and exploitation databse: http://exploit-db.com/
+
+---
+
+# #DHCP Server:
+
+Install DHCP server in windows server:
+
+1. Turn of the DHCP of router in order to make the server inside windows give IPs.
+2. In 'Server Manager' in Windows Server, click 'manage' on the upper right corner.
+3. Click - 'Add roles and features'
+4. Click - Next(default settings) - Next(default settings) - Select a server from the server pool - Next
+5. Tick on the DHCP Server - Next - Next - Install
+
+Configure DHCP server in windows server:
+
+1. Right click DHCP server and open DHCP manager
+2. Fill up the scope; Filter allow;deny and all the options.
+
+---
+
+# #DNS Server:
+
+13 Root Name Servers(Maintained by IANA)
+TLD(Top Level Domain) Name Server(.com, .in, .org, .gov, etc servers)
+Domain Name Server
+Public DNS(Google: 8.8.8.8; 8.8.4.4, Cloudflare: 1.1.1.1, 1.0.0.1, etc)
+Working of DNS:
+
+We purchase the tld like .com, .org, .in etc from a medium only like godaddy which acts as a retailer in the process
+
+Godaddy provides the server which  we call Domain Name Server which is managed by godaddy and the .com is managed by its
+TLD Name server
+
+TLD Name Servers Record is stored in one of the 13 Root Name Server
+
+![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/b9d57550-3f7e-43fd-91d7-c9e38f29ee9d/21fe7fdd-9dc8-45cd-83de-3dd17aa4f0df/Untitled.png)
+
+Work of Domain Name Server is to hold the DNS Records:
+
+1. A Record : Addressing Mapping Record(IPv4)
+2. AAAA Record: Holds Record for IPv6 record of the domain
+3. CName Record: Alias Name or Clonical Name : Forwards one domain or subdomain to another domain, does not provide an IP address or we use different names for the same website then we use this
+server will search for [armour.wordpress.com](http://armour.wordpress.com/)[blog.armourinfosec.com](http://blog.armourinfosec.com/) --------------------------------------------> armour.wordpress.com-------------------> IP Address\
+4. MX Record: Directs mail to an Email Server([mail.armourinfosec.com](http://mail.armourinfosec.com/) where armourinfosec is the mail server of any domain)
+5. TXT Record: Stores string of text connected with the hostname often used for verification of the authenticity of a domain just like comments in programming.
+6. NS Record: Name server record: holds the information about the dns server where all these records are placed, more at
+[ns05.domaincontrol.com](http://ns05.domaincontrol.com/)(master/primary)
+[ns05.domaincontrol.com](http://ns05.domaincontrol.com/)(slave/secondary)
+7. SOA Record: Stores the admin information of a domain or the primary and secondary name server of a domain
+8. PTR Record: Provides a domain for in reverse lookups.
+9. SRV Record: Provides port number for a specific service running on the domain
+
+Note: Hosts file contains information of dns records
+this information gets mounted in the dns cache (ipconfig \displaydns)
+
+### Location of host file
+
+linux: /etc/hosts
+windows: sys32\drivers\etc\hosts
+
+=>nslookup -type=A ip/name
+(types: A, AAAA, cname, ns, etc)
+=> nslookup -type=any ip/name(for all records)
+
+How to make a Main Name Server:
+
+[1.In](http://1.in/) 'Server Manager' in Windows Server, click 'manage' on the upper right corner.
+2. Click - 'Add roles and features'
+3. Click - Next(default settings) - Next(default settings) - Select a server from the server pool - Next
+4. Tick on the DNS Server - Next - Next - Install
+5. Open DNS Manager --> Forward Lookup Zone(right click->new zone)
+6. Make a main domain(new zone) name and give IP
+7. Under main domain create subdomains and provide IPs for each subdomain
+8. Now the nslookup/browser will look for the IP in the local DNS before searching in Public DNS.
+
+---
+
+All things below are possible with NTFS File System only:
+
+Must have Windows Ultimate to do all these operations
+
+Disk Management Settings:
+Disk Partitions:
+User Management:
+Persmissions and all:
+Right click folder: Properties: Security: Edit permissions
+Admin can edit ownership at any time
+
+Computer Management(search with 3-finger):
+Local Users and Groups Management: can do every hell amounta shit that a system admin would want
+Settings applied to the group will apply to every user in that group
+
+Active Directory Domain Server(ADDS) in Windows Server: A central server to control and manage user and group policies
+
+Distributed File System(DFS): To manage multiple servers
+
+File Server Resouce Manager: To manage the files and resources on the basis of categories; like restricting use of storage upto certain GB using quota and using the filetype:extensions
+
+---
+
+# Web Hosting:
+
+Types of Web Hosting
+
+1. Self Hosted Server: For big organisation which uses their own server to host the websites; needs maintenance and dedicated employees to manage servers
+2. Dedicated Server: Dedicated servers are used in relatively small firm whose traffic is about 1000-5000 visits per day; multiple servers are putted in a room each with their own processor and website.
+3. Virtual Private Server: Same as virtualisation; a server is logically set to provide resources to different website on the same server.
+4. Cloud Hosting: When multiple servers are used to host the same website for the security of the data. Virtual cloud server, cloud dedicated server are the two types.
+
+Website Binding:
+
+Types of website binding
+
+1. Binding by IP: Binding same website with multiple IPs
+2. Binding by Port: Same website on same IP but different port, multiple websites using the same port
+3. Binding by Type: Same website on same IP but different protocol
+4. Binding by Name: Search for similar name would direct to the same website; we have to list all the name though
+
+IIS: Internet Information Services is responsible for doing all these operations in Windows Server
+
+Binding by IP, Port and Type can be done using Windows Client System also for a lesser number of users
+
+1. Control Panel - Programs and Features - Turn features On and Off - Tick IIS and IIS web : Turn all the features on
+Browser: Search IP of Server
+2. Network Settings: IPv4 Settings: Advanced: Give mulptiple IPs there
+3. Now all the IPs will obtain the same default IIS page
+4. Download HTML templates
+5. Move templates to C:\inetpub\wwwroot
+6. Open IIS Manager and do some shit yourself not everything would be written
+
+FTP Server
+Proxy Server
